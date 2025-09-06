@@ -1,0 +1,160 @@
+// // app/api/preferences/route.js
+// export const runtime = "nodejs";
+// export const revalidate = 0;
+
+// import { NextResponse } from "next/server";
+// import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+// import { prisma } from "@/lib/prisma";
+
+// export async function GET() {
+//   try {
+//     const { getUser } = getKindeServerSession();
+//     const u = await getUser();
+//     if (!u?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+//     const user = await prisma.user.findUnique({
+//       where: { kindeId: u.id },
+//       include: { preferences: true },
+//     });
+
+//     return NextResponse.json({ preference: user?.preferences ?? null }, { status: 200 });
+//   } catch {
+//     return NextResponse.json({ error: "Server error" }, { status: 500 });
+//   }
+// }
+
+// export async function POST(req) {
+//   try {
+//     const { getUser } = getKindeServerSession();
+//     const u = await getUser();
+//     if (!u?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+//     const body = await req.json();
+//     const {
+//       frequency = "DAILY",
+//       topics = null,
+//       paused, // <- boolean (optional)
+//     } = body;
+
+//     const user = await prisma.user.findUnique({ where: { kindeId: u.id } });
+//     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+//     const data = { frequency, topics };
+//     if (typeof paused === "boolean") data.paused = paused;
+
+//     const pref = await prisma.preference.upsert({
+//       where: { userId: user.id },
+//       update: data,
+//       create: { userId: user.id, ...data },
+//     });
+
+//     return NextResponse.json({ preference: pref }, { status: 200 });
+//   } catch {
+//     return NextResponse.json({ error: "Server error" }, { status: 500 });
+//   }
+// }
+
+
+
+
+// app/api/preferences/route.js
+export const runtime = "nodejs";
+export const revalidate = 0;
+
+import { NextResponse } from "next/server";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { prisma } from "@/lib/prisma";
+
+const FREQS = new Set(["DAILY", "BIWEEKLY", "MONTHLY"]);
+
+function sanitizeTopics(input) {
+  if (typeof input !== "string") return null;
+  // split, trim, remove empties, dedupe, rejoin (preserve user words/casing)
+  const list = Array.from(
+    new Set(
+      input
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean)
+    )
+  );
+  // clamp to avoid absurdly long strings (email safety)
+  const joined = list.join(", ");
+  return joined.slice(0, 600); // ~600 chars total
+}
+
+export async function GET() {
+  try {
+    const { getUser } = getKindeServerSession();
+    const u = await getUser();
+    if (!u?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { kindeId: u.id },
+      // Use the relation name that matches your Prisma schema:
+      include: { preferences: true }, // or { preference: true } if singular
+    });
+
+    return NextResponse.json({ preference: user?.preferences ?? null }, { status: 200 });
+  } catch {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
+export async function POST(req) {
+  try {
+    const { getUser } = getKindeServerSession();
+    const u = await getUser();
+    if (!u?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+
+    // Allow partial updates:
+    const next = {};
+
+    // frequency (optional)
+    if (body.frequency !== undefined) {
+      const freq = String(body.frequency).toUpperCase();
+      next.frequency = FREQS.has(freq) ? freq : "DAILY";
+    }
+
+    // topics (optional)
+    if (body.topics !== undefined) {
+      next.topics = sanitizeTopics(body.topics);
+    }
+
+    // paused (optional boolean)
+    if (typeof body.paused === "boolean") {
+      next.paused = body.paused;
+    }
+
+    // If client didn’t send any known fields, default to no-op
+    if (Object.keys(next).length === 0) {
+      return NextResponse.json({ error: "No valid fields provided" }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { kindeId: u.id } });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const pref = await prisma.preference.upsert({
+      where: { userId: user.id },
+      update: next,
+      create: {
+        userId: user.id,
+        frequency: next.frequency ?? "DAILY",
+        topics: next.topics ?? null,
+        paused: next.paused ?? false,
+      },
+    });
+
+    return NextResponse.json({ preference: pref }, { status: 200 });
+  } catch {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
