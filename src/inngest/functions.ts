@@ -2,10 +2,13 @@ export async function fetchArticles(categories: string[]):Promise<Array<{title: 
 const since  = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 const promises = categories.map(async(category)=>{
     try {
-        const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(category)}&from=${since}&sortBy=publishedAt&apiKey=${process.env.NEWS_API_KEY}`)
-        if(!response.ok){
-    console.error("Failed fetching for this category", category)
-    return []
+      const response = await fetch(
+  `https://newsapi.org/v2/everything?q=${encodeURIComponent(category)}&from=${since}&sortBy=publishedAt&language=en&apiKey=${process.env.NEWS_API_KEY}`
+);
+
+if (!response.ok) {
+  console.error("Failed fetching for this category", category);
+  return [];
 }
 
 const data = await response.json()
