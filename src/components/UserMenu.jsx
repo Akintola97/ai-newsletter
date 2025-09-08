@@ -21,10 +21,6 @@ export default function UserMenu({ user }) {
         <LoginLink postLoginRedirectURL="/dashboard">
           <Button size="sm">Sign in</Button>
         </LoginLink>
-        {/* Optional: */}
-        {/* <RegisterLink postLoginRedirectURL="/dashboard">
-          <Button size="sm" variant="outline">Sign up</Button>
-        </RegisterLink> */}
       </div>
     );
   }
