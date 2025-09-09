@@ -7,6 +7,7 @@ import scheduler from "@/inngest/scheduler";
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
   client: inngest,
+  signingKey: process.env.INNGEST_SIGNING_KEY,
   functions: [
   newsletter, scheduler
     /* your functions will be passed here later! */
