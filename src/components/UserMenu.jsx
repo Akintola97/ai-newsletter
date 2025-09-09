@@ -75,8 +75,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+
+/** Build two-letter initials: given+family → name → email local-part */
+function getInitials(user) {
+  const first =
+    user?.given_name ??
+    user?.name?.split(" ")?.[0] ??
+    user?.email?.split("@")?.[0] ??
+    "User";
+  const last =
+    user?.family_name ??
+    (user?.name ? user.name.split(" ").slice(-1)[0] : "") ??
+    "";
+  const f = (first?.[0] ?? "U").toUpperCase();
+  const l = (last?.[0] ?? (user?.name ? "" : (user?.email?.[1] ?? ""))).toUpperCase();
+  return (f + l).slice(0, 2);
+}
 
 export default function UserMenu({ user }) {
   if (!user) {
@@ -89,10 +104,10 @@ export default function UserMenu({ user }) {
     );
   }
 
-  const first = user.given_name?.[0] ?? user.name?.[0] ?? user.email?.[0] ?? "U";
-  const last = user.family_name?.[0] ?? "";
-  const initials = (first + last).toUpperCase();
-  const hasImage = Boolean(user.picture && user.picture.trim() !== "");
+  const initials = getInitials(user);
+  const displayName = user.given_name
+    ? `${user.given_name} ${user.family_name ?? ""}`.trim()
+    : user.name ?? user.email;
 
   return (
     <DropdownMenu>
@@ -100,28 +115,17 @@ export default function UserMenu({ user }) {
         <button
           className="inline-flex items-center rounded-full outline-none focus:ring-2 focus:ring-ring"
           aria-label="Open user menu"
+          title={displayName}
         >
-          <Avatar className="h-8 w-8">
-            {hasImage && (
-              <AvatarImage
-                src={user.picture}
-                alt={user.given_name ?? user.name ?? "User"}
-                // if the URL 404s, Radix will switch to fallback automatically
-              />
-            )}
-            <AvatarFallback className="text-xs font-medium">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          {/* Initials badge (no image) */}
+          <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground grid place-items-center text-xs font-medium">
+            {initials}
+          </div>
         </button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="truncate">
-          {user.given_name
-            ? `${user.given_name} ${user.family_name ?? ""}`.trim()
-            : user.name ?? user.email}
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="truncate">{displayName}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/dashboard">Dashboard</Link>
