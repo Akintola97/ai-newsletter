@@ -56,13 +56,30 @@ model Issue {
   deliveries Delivery[]
 }
 
+// model Delivery {
+//   id      String   @id @default(cuid())
+//   userId  String
+//   user    User     @relation(fields: [userId], references: [id])
+//   issueId String
+//   issue   Issue    @relation(fields: [issueId], references: [id])
+//   sentAt  DateTime @default(now())
+//   status  String // "SENT", "FAILED"
+//   error   String?
+// }
+
 model Delivery {
-  id      String   @id @default(cuid())
-  userId  String
-  user    User     @relation(fields: [userId], references: [id])
-  issueId String
-  issue   Issue    @relation(fields: [issueId], references: [id])
-  sentAt  DateTime @default(now())
-  status  String // "SENT", "FAILED"
-  error   String?
+  id        String   @id @default(cuid())
+  userId    String
+  issueId   String
+  sentAt    DateTime @default(now())
+  subject   String   @default("")   // ← add default so old rows get a value
+  status    String
+  error     String?
+  toEmail   String?
+  toName    String?
+
+  user      User     @relation(fields: [userId], references: [id])
+  issue     Issue    @relation(fields: [issueId], references: [id])
 }
+
+
