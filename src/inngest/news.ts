@@ -64,7 +64,7 @@ export default inngest.createFunction(
 
     // Summarize via AI
     const ai = await step.ai.infer("summarize-news", {
-      model: step.ai.models.openai({ model: "gpt-4o" }),
+      model: step.ai.models.openai({ model: "gpt-5-mini" }),
       body: {
         messages: [
           {
