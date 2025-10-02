@@ -1,40 +1,37 @@
-# Node modules and debug logs
+# Node / logs
 node_modules
 npm-debug.log
-yarn.lock
+yarn-error.log
 pnpm-lock.yaml
+pnpm-debug.log
 
-# Local env files (don’t bake secrets into image)
+# Next.js cache (keep final build output)
+.next/cache
+
+# Local env files (don’t bake secrets into the image)
 .env
 .env.local
 .env.*.local
 
-# Next.js build cache (only exclude cache, not final build)
-.next/cache
-
-# System / editor junk
-*.log
+# VCS / editor junk
+.git
+.gitignore
 .DS_Store
-*.swp
 .vscode
 .idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw*
+*.swp
+*.swo
 
-# Docker + build junk
-.dockerignore
+# Docker/compose files (not needed in build context)
 Dockerfile
-docker-compose*
-compose.y*ml
+docker-compose.yml
+docker-compose.override.yml
 
-# Output builds
+# Output & coverage
 dist
 build
 coverage
 
-# Optional — ignore docs / metadata if not needed in container
+# Docs (optional)
 README.md
 LICENSE

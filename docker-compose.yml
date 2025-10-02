@@ -1,0 +1,20 @@
+services:
+  newsletter-app:
+    build:
+      context: .
+      args:                # Build-time envs (override the Dockerfile "dummy" defaults)
+        KINDE_ISSUER_URL: ${KINDE_ISSUER_URL}
+        KINDE_CLIENT_ID: ${KINDE_CLIENT_ID}
+        KINDE_CLIENT_SECRET: ${KINDE_CLIENT_SECRET}
+        KINDE_SITE_URL: ${KINDE_SITE_URL}
+        RESEND_API_KEY: ${RESEND_API_KEY}
+        OPENAI_API_KEY: ${OPENAI_API_KEY}
+        INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
+        INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
+        NEWS_API_KEY: ${NEWS_API_KEY}
+    container_name: newsletter-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env               # Runtime secrets injected here
+    restart: always
