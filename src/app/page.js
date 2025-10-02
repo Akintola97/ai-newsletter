@@ -30,7 +30,7 @@
 // Server Component
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
-import HomeHero from "./home-hero";
+import HomeHero from "../components/home-hero";
 
 export const dynamic = "force-dynamic"; // ensure this isn't statically cached
 export const revalidate = 0;
