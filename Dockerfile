@@ -14,28 +14,7 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
-# --- Build-time envs (safe defaults). Compose can override with real values.
-ARG KINDE_ISSUER_URL=dummy
-ARG KINDE_CLIENT_ID=dummy
-ARG KINDE_CLIENT_SECRET=dummy
-ARG KINDE_SITE_URL=dummy
-ARG RESEND_API_KEY=dummy
-ARG OPENAI_API_KEY=dummy
-ARG INNGEST_EVENT_KEY=dummy
-ARG INNGEST_SIGNING_KEY=dummy
-ARG NEWS_API_KEY=dummy
-
-ENV KINDE_ISSUER_URL=$KINDE_ISSUER_URL
-ENV KINDE_CLIENT_ID=$KINDE_CLIENT_ID
-ENV KINDE_CLIENT_SECRET=$KINDE_CLIENT_SECRET
-ENV KINDE_SITE_URL=$KINDE_SITE_URL
-ENV RESEND_API_KEY=$RESEND_API_KEY
-ENV OPENAI_API_KEY=$OPENAI_API_KEY
-ENV INNGEST_EVENT_KEY=$INNGEST_EVENT_KEY
-ENV INNGEST_SIGNING_KEY=$INNGEST_SIGNING_KEY
-ENV NEWS_API_KEY=$NEWS_API_KEY
-
-# Build Next.js (standalone output requires next.config output:"standalone")
+# Build Next.js (requires next.config output:"standalone")
 RUN npm run build
 
 # -----------------------------
