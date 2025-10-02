@@ -1,10 +1,10 @@
 services:
   newsletter-app:
-    build:
-      context: .
+    build: .
     container_name: newsletter-app
+    restart: always
     ports:
       - "3000:3000"        # App listens on port 3000
     env_file:
       - .env               # Loads DATABASE_URL, DIRECT_URL, API keys, etc.
-    restart: unless-stopped
+    
