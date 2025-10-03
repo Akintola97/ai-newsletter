@@ -1,10 +1,28 @@
+# services:
+#   newsletter-app:
+#     build:
+#       context: .
+#     container_name: newsletter-app
+#     ports:
+#       - "3000:3000"
+#     env_file:
+#       - .env        # runtime secrets only
+#     restart: always
+
+
+
+
 services:
   newsletter-app:
     build:
       context: .
     container_name: newsletter-app
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env        # runtime secrets only
     restart: always
+    env_file:
+      - .env
+    networks:
+      - boltluna-net
+
+networks:
+  boltluna-net:
+    external: true
