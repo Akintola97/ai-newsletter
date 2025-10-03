@@ -42,6 +42,21 @@
 
 
 
+# version: "3.9"
+# services:
+#   newsletter-app:
+#     build:
+#       context: .
+#     container_name: newsletter-app
+#     restart: always
+#     env_file:
+#       - .env
+#     expose:
+#       - "3000"  # Only inside Docker network, no host port binding
+
+
+
+
 version: "3.9"
 services:
   newsletter-app:
@@ -52,4 +67,10 @@ services:
     env_file:
       - .env
     expose:
-      - "3000"  # Only inside Docker network, no host port binding
+      - "3000"
+    networks:
+      - boltluna-net
+
+networks:
+  boltluna-net:
+    external: true
