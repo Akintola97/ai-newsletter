@@ -1,37 +1,55 @@
-# Node / logs
-node_modules
-npm-debug.log
-yarn-error.log
-pnpm-lock.yaml
-pnpm-debug.log
+# # Node / logs
+# node_modules
+# npm-debug.log
+# yarn-error.log
+# pnpm-lock.yaml
+# pnpm-debug.log
 
-# Next.js cache (keep final build output)
-.next/cache
+# # Next.js cache (keep final build output)
+# .next/cache
 
-# Local env files (don’t bake secrets into the image)
-.env
-.env.local
-.env.*.local
+# # Local env files (don’t bake secrets into the image)
+# .env
+# .env.local
+# .env.*.local
 
-# VCS / editor junk
-.git
-.gitignore
-.DS_Store
-.vscode
-.idea
-*.swp
-*.swo
+# # VCS / editor junk
+# .git
+# .gitignore
+# .DS_Store
+# .vscode
+# .idea
+# *.swp
+# *.swo
 
-# Docker/compose files (not needed in build context)
-Dockerfile
-docker-compose.yml
-docker-compose.override.yml
+# # Docker/compose files (not needed in build context)
+# Dockerfile
+# docker-compose.yml
+# docker-compose.override.yml
 
-# Output & coverage
-dist
-build
-coverage
+# # Output & coverage
+# dist
+# build
+# coverage
 
-# Docs (optional)
-README.md
-LICENSE
+# # Docs (optional)
+# README.md
+# LICENSE
+
+
+
+
+
+
+
+version: "3.9"
+services:
+  newsletter-app:
+    build:
+      context: .
+    container_name: newsletter-app
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - "3000"  # Only inside Docker network, no host port binding
