@@ -1,17 +1,35 @@
+# services:
+#   newsletter-app:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile   # change to Dockerfile if that's your filename
+#     container_name: newsletter-app
+#     env_file:
+#       - .env
+#     expose:
+#       - "3000"                 # internal-only; no host port publish
+#     networks:
+#       - boltluna-net
+#     restart: unless-stopped
+
+# networks:
+#   boltluna-net:
+#     external: true
+
+
+
+
+
+
+
 services:
   newsletter-app:
     build:
       context: .
-      dockerfile: Dockerfile   # change to Dockerfile if that's your filename
+      dockerfile: Dockerfile   # match your actual file name
     container_name: newsletter-app
     env_file:
-      - .env
-    expose:
-      - "3000"                 # internal-only; no host port publish
-    networks:
-      - boltluna-net
+      - .env.production
+    ports:
+      - "3002:3000"   # host:container
     restart: unless-stopped
-
-networks:
-  boltluna-net:
-    external: true
