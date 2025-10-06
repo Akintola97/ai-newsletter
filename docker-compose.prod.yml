@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile   # match your actual file name
     container_name: newsletter-app
     env_file:
-      - .env.production
+      - .env
     ports:
       - "3002:3000"   # host:container
     restart: unless-stopped
