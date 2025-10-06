@@ -2,7 +2,7 @@ services:
   newsletter-app:
     build:
       context: .
-      dockerfile: dockerfile   # change to Dockerfile if that's your filename
+      dockerfile: Dockerfile   # change to Dockerfile if that's your filename
     container_name: newsletter-app
     env_file:
       - .env
